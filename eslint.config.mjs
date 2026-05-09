@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import json from '@eslint/json';
+import tseslintPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import checkFile from 'eslint-plugin-check-file';
 import packageJson from 'eslint-plugin-package-json';
@@ -53,7 +54,11 @@ const ignores = [
   'database-manager/migrations',
   'grafana/**',
   'ecs/**',
+  '.last-run.json',
 ];
+
+const configFiles = ['**/*.config.js', '**/*.config.ts', '.commitlintrc.js', '.lintstagedrc.js'];
+
 const tsFiles = ['**/*.{ts,tsx}'];
 
 const languageOptions = {
@@ -71,10 +76,12 @@ const customTypescriptConfig = {
     ...languageOptions,
     parser: tsParser,
     parserOptions: {
-      project: './tsconfig.json',
+      projectService: true,
+      tsconfigRootDir: import.meta.dirname,
     },
   },
   plugins: {
+    '@typescript-eslint': tseslintPlugin,
     'check-file': checkFile,
     'import/parsers': tsParser,
   },
@@ -204,8 +211,18 @@ const regexpConfig = {
   ...regexpPlugin.configs['flat/recommended'],
 };
 
+const disableTypeCheckedForConfigs = {
+  files: configFiles,
+  languageOptions: {
+    parserOptions: {
+      projectService: false,
+    },
+  },
+};
+
 export default [
   { ignores },
+  disableTypeCheckedForConfigs,
   ...recommendedTypeScriptConfigs,
   prettierRecommended,
   perfectionistConfig,
