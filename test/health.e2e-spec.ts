@@ -1,0 +1,38 @@
+import request from 'supertest';
+
+import { server } from './setup/bootstrap.app';
+
+describe('Health API (e2e)', () => {
+  describe('GET /health', () => {
+    describe('positive cases', () => {
+      it('returns 200 with a status field', async () => {
+        const res = await request(server).get('/health').expect(200);
+
+        expect(res.body).toHaveProperty('status');
+      });
+
+      it('reports status as "ok"', async () => {
+        const res = await request(server).get('/health').expect(200);
+        const body = res.body as { status: string };
+
+        expect(body.status).toBe('ok');
+      });
+    });
+  });
+
+  describe('GET /health/deps', () => {
+    describe('positive cases', () => {
+      it('returns 200 with a status field', async () => {
+        const res = await request(server).get('/health/deps').expect(200);
+
+        expect(res.body).toHaveProperty('status');
+      });
+
+      it('includes info about each dependency', async () => {
+        const res = await request(server).get('/health/deps').expect(200);
+
+        expect(res.body).toHaveProperty('info');
+      });
+    });
+  });
+});
