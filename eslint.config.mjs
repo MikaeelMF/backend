@@ -88,6 +88,7 @@ const customTypescriptConfig = {
   rules: {
     '@typescript-eslint/ban-ts-comment': 'error',
     '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/consistent-type-imports': 'error',
     '@typescript-eslint/explicit-function-return-type': 'warn',
     '@typescript-eslint/naming-convention': [
       'error',

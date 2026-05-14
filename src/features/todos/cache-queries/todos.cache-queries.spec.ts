@@ -1,4 +1,5 @@
-import { TodosQueryDto } from '../../../api/todos/dtos/queries/todos-query.dto';
+import type { TodosQueryDto } from '../../../api/todos/dtos/queries/todos-query.dto';
+
 import { SortOrder, TodoSortField } from '../interfaces/queries.enum';
 import { TodosCacheKeys } from './todos.cache-queries';
 

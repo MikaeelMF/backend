@@ -1,6 +1,8 @@
-import { ThrottlerStorageRedis, ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { ThrottlerStorageRecord } from '@nestjs/throttler/dist/throttler-storage-record.interface';
-import Redis from 'ioredis';
+import type { ThrottlerStorageRedis } from '@nest-lab/throttler-storage-redis';
+import type { ThrottlerStorageRecord } from '@nestjs/throttler/dist/throttler-storage-record.interface';
+import type Redis from 'ioredis';
+
+import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 
 /**
  * Hybrid Storage: Redis + Memory Fallback

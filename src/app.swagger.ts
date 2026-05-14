@@ -1,10 +1,13 @@
-import { INestApplication } from '@nestjs/common';
-import { ConfigService, ConfigType } from '@nestjs/config';
+import type { INestApplication } from '@nestjs/common';
+import type { ConfigType } from '@nestjs/config';
+
+import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 
-import { appConfig } from './config/app.config';
-import { swaggerConfig } from './config/swagger.config';
+import type { appConfig } from './config/app.config';
+import type { swaggerConfig } from './config/swagger.config';
+
 import { LoggerService } from './logger/logger.service';
 import { EnvironmentService } from './modules/environment/environment.service';
 

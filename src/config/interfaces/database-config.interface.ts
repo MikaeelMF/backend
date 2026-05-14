@@ -1,4 +1,4 @@
-import { LogLevel } from '../../../database-manager/generated/internal/prismaNamespace';
+import type { LogLevel } from '../../../database-manager/generated/internal/prismaNamespace';
 
 export interface DatabaseConfigInterface {
   databaseFailFast: boolean;

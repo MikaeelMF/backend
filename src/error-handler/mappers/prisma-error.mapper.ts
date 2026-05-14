@@ -1,5 +1,6 @@
+import type { BaseError } from '../errors/_base.error';
+
 import { Prisma } from '../../../database-manager/generated/client';
-import { BaseError } from '../errors/_base.error';
 import {
   DatabaseNotFoundError,
   DatabaseUniqueConstraintError,

@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 
-import { TodosQueryDto } from '../../api/todos/dtos/queries/todos-query.dto';
+import type { TodosQueryDto } from '../../api/todos/dtos/queries/todos-query.dto';
+
 import { TodoNotFoundError } from '../../error-handler/errors/todo.errors';
 import { cacheStorageMock } from '../../mocks/cache-storage.mock';
 import { prismaMock } from '../../mocks/prisma.mock';

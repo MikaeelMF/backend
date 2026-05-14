@@ -1,4 +1,4 @@
-import { EnvironmentType } from '../enums/environment.enum';
+import type { EnvironmentType } from '../enums/environment.enum';
 
 export interface EnvironmentConfigInterface {
   env: EnvironmentType;

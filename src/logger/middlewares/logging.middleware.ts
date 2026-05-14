@@ -1,8 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
-import { LogConfigInterface } from '../../config/interfaces/log-config.interface';
+import type { LogConfigInterface } from '../../config/interfaces/log-config.interface';
+import type { LoggerService } from '../logger.service';
+
 import { HEALTH_ENDPOINT, METRICS_ENDPOINT } from '../../constants/url.contants';
-import { LoggerService } from '../logger.service';
 
 export const loggingMiddleware =
   (config: LogConfigInterface, loggerService: LoggerService) =>

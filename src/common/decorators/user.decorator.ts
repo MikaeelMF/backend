@@ -1,7 +1,9 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Request } from 'express';
+import type { ExecutionContext } from '@nestjs/common';
+import type { Request } from 'express';
 
-import { UserInterface } from '../../shared/interfaces/user.interface';
+import { createParamDecorator } from '@nestjs/common';
+
+import type { UserInterface } from '../../shared/interfaces/user.interface';
 
 export const User = (): ParameterDecorator =>
   createParamDecorator((_: unknown, ctx: ExecutionContext): UserInterface => {

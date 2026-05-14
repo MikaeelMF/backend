@@ -1,7 +1,9 @@
-import { INestApplication } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { Test, TestingModule } from '@nestjs/testing';
-import { App } from 'supertest/types';
+import type { INestApplication } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import type { TestingModule } from '@nestjs/testing';
+import type { App } from 'supertest/types';
+
+import { Test } from '@nestjs/testing';
 
 import { AppModule } from '../../src/app.module';
 import { appSetup } from '../../src/app.setup';

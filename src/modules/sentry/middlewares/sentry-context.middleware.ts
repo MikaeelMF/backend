@@ -1,5 +1,6 @@
+import type { NextFunction, Request, Response } from 'express';
+
 import Sentry from '@sentry/node';
-import { NextFunction, Request, Response } from 'express';
 
 import { RequestContext } from '../../../logger/context/request-context';
 

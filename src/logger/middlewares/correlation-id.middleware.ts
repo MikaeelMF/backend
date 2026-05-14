@@ -1,5 +1,6 @@
+import type { NextFunction, Request, Response } from 'express';
+
 import { randomUUID } from 'crypto';
-import { NextFunction, Request, Response } from 'express';
 
 import { capitalizeFirstLetter } from '../../common/utils/strings';
 import { RequestContext } from '../context/request-context';

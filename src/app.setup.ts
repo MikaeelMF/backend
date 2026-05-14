@@ -1,25 +1,22 @@
+import type { INestApplication } from '@nestjs/common';
 import type { ConfigType } from '@nestjs/config';
+import type { ValidationError } from 'class-validator';
 
-import {
-  ClassSerializerInterceptor,
-  INestApplication,
-  RequestMethod,
-  ValidationPipe,
-  VersioningType,
-} from '@nestjs/common';
+import { ClassSerializerInterceptor, RequestMethod, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import { useContainer, ValidationError } from 'class-validator';
+import { useContainer } from 'class-validator';
 import compression from 'compression';
 import httpContext from 'express-http-context';
 import helmet from 'helmet';
 
+import type { apiConfig } from './config/api.config';
+import type { appConfig } from './config/app.config';
+import type { logConfig } from './config/log.config';
+import type { sentryConfig } from './config/sentry.config';
+
 import { AppModule } from './app.module';
 import { UnifiedResponseInterceptor } from './common/interceptors/unified-response.interceptor';
-import { apiConfig } from './config/api.config';
-import { appConfig } from './config/app.config';
-import { logConfig } from './config/log.config';
-import { sentryConfig } from './config/sentry.config';
 import { HEALTH_ENDPOINT, METRICS_ENDPOINT } from './constants/url.contants';
 import { DtoValidationErrors } from './error-handler/errors/dto-validation.errors';
 import { GlobalExceptionFilter } from './error-handler/filters/global-exception.filter';

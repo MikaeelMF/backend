@@ -3,10 +3,11 @@ import type { ConfigType } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
+import type { appConfig } from './config/app.config';
+
 import { AppModule } from './app.module';
 import { appSetup } from './app.setup';
 import { appSwaggerSetup } from './app.swagger';
-import { appConfig } from './config/app.config';
 import { LoggerService } from './logger/logger.service';
 
 async function bootstrap(): Promise<void> {

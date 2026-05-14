@@ -1,4 +1,4 @@
-import { ValidationError } from 'class-validator';
+import type { ValidationError } from 'class-validator';
 
 export function parseValidationErrors(errors: ValidationError[], parentPath = ''): Record<string, string[]> {
   const result: Record<string, string[]> = {};

@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
-import { HealthMetricsService } from '../health-metrics.service';
+import type { HealthMetricsService } from '../health-metrics.service';
 
 export const healthUpdateMiddleware =
   (healthMetricsService: HealthMetricsService, prometheusEndpoint: string) =>

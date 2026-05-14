@@ -1,4 +1,5 @@
-import { Todo } from '../../../../database-manager/generated/client';
+import type { Todo } from '../../../../database-manager/generated/client';
+
 import { TodoEntity } from '../entities/todo.entity';
 import { TodoMapper } from './todo.mapper';
 

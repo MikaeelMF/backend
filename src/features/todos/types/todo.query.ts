@@ -1,4 +1,4 @@
-import { SortOrder, TodoSortField } from '../interfaces/queries.enum';
+import type { SortOrder, TodoSortField } from '../interfaces/queries.enum';
 
 export interface TodoFilter {
   completed?: boolean;

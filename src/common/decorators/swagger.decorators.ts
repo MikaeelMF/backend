@@ -1,4 +1,7 @@
-import { applyDecorators, HttpStatus, Type } from '@nestjs/common';
+import type { Type } from '@nestjs/common';
+import type { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+
+import { applyDecorators, HttpStatus } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiExtraModels,
@@ -7,9 +10,9 @@ import {
   ApiResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-import { BaseError } from '../../error-handler/errors/_base.error';
+import type { BaseError } from '../../error-handler/errors/_base.error';
+
 import { ApiErrorDto } from '../../shared/dtos/errors.dto';
 import { PaginatedResponseDto, PaginationMetaDto } from '../../shared/dtos/pagination.dto';
 

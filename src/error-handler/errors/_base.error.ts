@@ -1,8 +1,8 @@
 // eslint-disable-next-line check-file/filename-naming-convention
-import { HttpStatus } from '@nestjs/common';
+import type { HttpStatus } from '@nestjs/common';
 
-import { ErrorCategory } from '../constants/error-category';
-import { ErrorCodes } from '../constants/error.codes';
+import type { ErrorCategory } from '../constants/error-category';
+import type { ErrorCodes } from '../constants/error.codes';
 
 export class BaseError<T> extends Error {
   constructor(
