@@ -1,12 +1,38 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": "..",
+  "rootDir": "../..",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
-  "setupFilesAfterEnv": ["<rootDir>/setup/bootstrap.app.ts"],
-  "globalSetup": "<rootDir>/setup/setup.global.ts",
-  "globalTeardown": "<rootDir>/setup/teardown.global.ts",
+  "setupFilesAfterEnv": ["<rootDir>/test/setup/bootstrap.app.ts"],
+  "globalSetup": "<rootDir>/test/setup/setup.global.ts",
+  "globalTeardown": "<rootDir>/test/setup/teardown.global.ts",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!src/main.ts",
+    "!src/**/*.module.ts",
+    "!src/**/*.spec.ts",
+    "!src/app.setup.ts",
+    "!src/app.swagger.ts",
+    "!src/**/*.config.ts",
+    "!src/**/*.interface.ts",
+    "!src/**/*.enum.ts",
+    "!src/**/*.dto.ts",
+    "!src/**/*.entity.ts",
+    "!src/**/*di.types.ts",
+    "!src/**/*.constants.ts",
+    "!src/**/*.contants.ts"
+  ],
+  "coverageDirectory": "coverage-e2e",
+  "coverageProvider": "v8",
+  "coverageThreshold": {
+    "global": {
+      "branches": 80,
+      "functions": 80,
+      "lines": 80,
+      "statements": 80
+    }
   }
 }
