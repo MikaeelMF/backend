@@ -41,7 +41,20 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/main.ts",
+      "!**/*.module.ts",
+      "!**/*.spec.ts",
+      "!**/app.setup.ts",
+      "!**/app.swagger.ts",
+      "!**/*.config.ts",
+      "!**/*.interface.ts",
+      "!**/*.enum.ts",
+      "!**/*.dto.ts",
+      "!**/*.entity.ts",
+      "!**/*di.types.ts",
+      "!**/*.constants.ts",
+      "!**/*.contants.ts"
     ],
     "coverageDirectory": "../coverage",
     "moduleFileExtensions": [
