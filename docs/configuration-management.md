@@ -22,9 +22,9 @@ secret management.
 
 ## Environment Configuration Strategy
 
-The configuration system is built around two main files - **.env.common**, **.env**
+The configuration system is built around two main files - `.env.common`, `.env`
 
-**.env.common** - this is the primary configuration file used for local development.
+`.env.common` - this is the primary configuration file used for local development.
 
 Characteristics:
 
@@ -36,7 +36,7 @@ Characteristics:
 Because this file is versioned, it acts as living documentation for all configuration variables required by the
 application.
 
-**.env** - this file is used for local overrides.
+`.env` - this file is used for local overrides.
 
 Sometimes developers need to change specific configuration values locally. For example:
 
@@ -44,24 +44,41 @@ Sometimes developers need to change specific configuration values locally. For e
 - using a local Redis instance
 - modifying debug options
 
-Instead of modifying .env.common, developers can override values in .env.
+Instead of modifying `.env.common`, developers can override values in `.env`.
 
 Example scenario:
 
 A developer needs to override the database port locally.
 
-```shell
+```dotenv
 DB_PORT=5332
 ```
 
 Key properties:
 
-- overrides variables defined in .env.common
+- overrides variables defined in `.env.common`
 - not committed to the repository
 - optional for developers
 - prevents merge conflicts between team members
 
-Each developer may have their own .env file.
+Each developer may have their own `.env` file.
+
+## Test Environment Overrides
+
+For test environments, some parts of the system configuration may also need to be overridden. For example, throttle
+limits may need to be increased because automated tests that repeatedly call the API could otherwise be blocked or
+disable Sentry for test env.
+
+Example:
+
+```dotenv
+THROTTLE_TTL=20000000
+THROTTLE_LIMIT=10000
+SENTRY_ENABLED=false
+```
+
+For such cases, we can use a dedicated `.env.test` file that overrides values from `.env.common` specifically for test
+execution.
 
 ## Secret Management
 
@@ -89,9 +106,9 @@ This significantly reduces the attack surface compared to storing secrets in env
 
 ## NestJS Configuration Setup
 
-In this project, NestJS loads configuration from both .env and .env.common.
+In this project, NestJS loads configuration from both `.env` and `.env.common`.
 
-.env takes precedence over .env.common.
+`.env` takes precedence over `.env.common`.
 
 Example configuration:
 
@@ -115,8 +132,8 @@ config({
 
 This ensures that:
 
-1. .env.common provides default values
-2. .env can override them locally if needed
+1. `.env.common` provides default values
+2. `.env` can override them locally if needed
 
 ## Structured Configuration Modules
 

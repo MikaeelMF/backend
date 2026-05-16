@@ -22,8 +22,8 @@ export const throttlerConfig = registerAs<ThrottlerConfig, ConfigFactory<Throttl
     const config = validateConfig(ThrottlerConfig);
 
     return {
-      throttlerLimit: process.env.NODE_ENV === 'test' ? 10000 : config.THROTTLE_LIMIT,
-      throttlerTtl: process.env.NODE_ENV === 'test' ? 20000000 : config.THROTTLE_TTL,
+      throttlerLimit: config.THROTTLE_LIMIT,
+      throttlerTtl: config.THROTTLE_TTL,
     };
   },
 );

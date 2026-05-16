@@ -3,7 +3,14 @@ import type { StartedRedisContainer } from '@testcontainers/redis';
 
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer } from '@testcontainers/redis';
+import { config } from 'dotenv';
 import { execSync } from 'node:child_process';
+import { join } from 'node:path';
+
+config({
+  override: false,
+  path: [join(process.cwd(), '.env.test'), join(process.cwd(), '.env.common')],
+});
 
 // eslint-disable-next-line @import-lite/no-default-export
 export default async function (): Promise<void> {
