@@ -60,6 +60,16 @@ describe('UnifiedResponseInterceptor', () => {
         done();
       });
     });
+
+    it('returns void for undefined data', (done) => {
+      const { ctx, res } = makeContext('/api/todos');
+
+      interceptor.intercept(ctx, makeHandler(undefined)).subscribe((result) => {
+        expect(res.status).toHaveBeenCalledWith(HttpStatus.NO_CONTENT);
+        expect(result).toBeUndefined();
+        done();
+      });
+    });
   });
 
   describe('positive cases', () => {
@@ -99,6 +109,26 @@ describe('UnifiedResponseInterceptor', () => {
 
       interceptor.intercept(ctx, makeHandler(data)).subscribe((result) => {
         expect(result).toBe(data);
+        done();
+      });
+    });
+
+    it('uses data property directly when response has data but no meta', (done) => {
+      const { ctx } = makeContext('/api/todos');
+      const payload = { data: [{ id: '1' }] };
+
+      interceptor.intercept(ctx, makeHandler(payload)).subscribe((result) => {
+        expect(result).toEqual({ data: [{ id: '1' }] });
+        done();
+      });
+    });
+
+    it('wraps non-data sub-object when meta is present but data property is absent', (done) => {
+      const { ctx } = makeContext('/api/todos');
+      const payload = { items: [{ id: '1' }], meta: { total: 1 } };
+
+      interceptor.intercept(ctx, makeHandler(payload)).subscribe((result) => {
+        expect(result).toEqual({ data: { items: [{ id: '1' }] }, meta: { total: 1 } });
         done();
       });
     });

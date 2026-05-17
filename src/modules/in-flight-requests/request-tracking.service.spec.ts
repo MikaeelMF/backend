@@ -18,6 +18,10 @@ describe('RequestTrackingService', () => {
       await expect(service.waitForRequestsToFinish(1000)).resolves.toBeUndefined();
     });
 
+    it('waitForRequestsToFinish uses default timeout when called without arguments', async () => {
+      await expect(service.waitForRequestsToFinish()).resolves.toBeUndefined();
+    });
+
     it('waitForRequestsToFinish times out when requests remain', async () => {
       service.increment();
 

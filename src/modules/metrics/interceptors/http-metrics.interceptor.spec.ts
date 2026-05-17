@@ -46,9 +46,19 @@ describe('HttpMetricsInterceptor', () => {
       });
     });
 
-    it('intercept records metrics on error', (done) => {
+    it('intercept records metrics on error with status', (done) => {
       const error = Object.assign(new Error('test'), { status: 400 });
       const handler: CallHandler = { handle: jest.fn().mockReturnValue(throwError(() => error)) };
+
+      interceptor.intercept(makeContext(), handler).subscribe({
+        error: () => {
+          done();
+        },
+      });
+    });
+
+    it('uses 500 as fallback status when error has no status property', (done) => {
+      const handler: CallHandler = { handle: jest.fn().mockReturnValue(throwError(() => new Error('no status'))) };
 
       interceptor.intercept(makeContext(), handler).subscribe({
         error: () => {

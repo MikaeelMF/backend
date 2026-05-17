@@ -63,6 +63,15 @@ describe('RedisHealthService', () => {
 
       expect(logger.warn).toHaveBeenCalled();
     });
+
+    it('returns down and logs error when clients list cannot be processed', async () => {
+      redisManager.getClients.mockReturnValue(null);
+
+      const result = await service.pingCheck('redis');
+
+      expect(result['redis'].status).toBe('down');
+      expect(logger.error).toHaveBeenCalled();
+    });
   });
 
   describe('positive cases', () => {

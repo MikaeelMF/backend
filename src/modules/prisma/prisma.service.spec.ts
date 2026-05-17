@@ -46,5 +46,16 @@ describe('PrismaService', () => {
 
       expect(logger.error).toHaveBeenCalledWith(expect.objectContaining({ msg: 'Prisma failed' }));
     });
+
+    it('calls process.exit(1) when connect fails and databaseFailFast is true', async () => {
+      const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+      const [service] = makeService(true);
+      jest.spyOn(service, '$connect').mockRejectedValue(new Error('connection refused'));
+
+      await service.onModuleInit();
+
+      expect(exitSpy).toHaveBeenCalledWith(1);
+      exitSpy.mockRestore();
+    });
   });
 });

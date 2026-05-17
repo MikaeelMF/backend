@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import * as classValidator from 'class-validator';
 import { IsIn, IsString } from 'class-validator';
 
 import { validateConfig } from './validate-config.util';
@@ -22,6 +23,7 @@ describe('validateConfig', () => {
 
   afterEach(() => {
     process.env = originalEnv;
+    jest.restoreAllMocks();
   });
 
   describe('negative cases', () => {
@@ -29,6 +31,14 @@ describe('validateConfig', () => {
       process.env.REQUIRED_VAR = 'invalid-value';
 
       expect(() => validateConfig(StrictConfig)).toThrow('Please provide the valid ENVs');
+    });
+
+    it('still throws when ValidationError has no constraints', () => {
+      jest
+        .spyOn(classValidator, 'validateSync')
+        .mockReturnValueOnce([{ children: [], constraints: undefined, property: 'test' }]);
+
+      expect(() => validateConfig(ValidConfig)).toThrow('Please provide the valid ENVs');
     });
   });
 

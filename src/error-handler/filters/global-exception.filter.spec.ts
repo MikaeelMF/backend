@@ -138,6 +138,24 @@ describe('GlobalExceptionFilter', () => {
       expect(Sentry.setUser).toHaveBeenCalledWith({ userId: 'user-42' });
     });
 
+    it('does not call Sentry.setUser when userId is absent', () => {
+      filter = new GlobalExceptionFilter(logger as unknown as LoggerService, { sentryEnabled: true } as never);
+      const { host } = makeHost({ route: { path: '/api' } });
+
+      filter.catch(new Error('test'), host);
+
+      expect(Sentry.setUser).not.toHaveBeenCalled();
+      expect(Sentry.captureException).toHaveBeenCalled();
+    });
+
+    it('falls back to req.url for metrics label when route is undefined', () => {
+      const { host, res } = makeHost();
+
+      filter.catch(new TodoNotFoundError('x'), host);
+
+      expect(res.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
+    });
+
     it('includes details in response when BaseError has details', () => {
       const { host, jsonMock } = makeHost({ route: { path: '/api/todos' } });
 

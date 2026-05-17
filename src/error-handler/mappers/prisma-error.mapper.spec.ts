@@ -88,3 +88,33 @@ describe('mapPrismaError', () => {
     });
   });
 });
+
+describe('DatabaseNotFoundError', () => {
+  describe('negative cases', () => {
+    it('falls back to static message when empty string is provided', () => {
+      const err = new DatabaseNotFoundError('');
+
+      expect(err.message).toBe(DatabaseNotFoundError.message);
+    });
+  });
+});
+
+describe('DatabaseUniqueConstraintError', () => {
+  describe('negative cases', () => {
+    it('falls back to static message when empty string is provided', () => {
+      const err = new DatabaseUniqueConstraintError('');
+
+      expect(err.message).toBe(DatabaseUniqueConstraintError.message);
+    });
+  });
+});
+
+describe('DatabaseValidationError', () => {
+  describe('negative cases', () => {
+    it('falls back to static message when empty string is provided', () => {
+      const err = new DatabaseValidationError('');
+
+      expect(err.message).toBe(DatabaseValidationError.message);
+    });
+  });
+});

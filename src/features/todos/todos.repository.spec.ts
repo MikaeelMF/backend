@@ -65,6 +65,16 @@ describe('TodosRepository', () => {
     const filter = {};
     const pagination = { limit: 10, offset: 1 };
 
+    describe('negative cases', () => {
+      it('uses empty orderBy when sortBy is falsy', async () => {
+        prismaMock.$transaction.mockResolvedValue([[], 0]);
+
+        await repository.findAll('user-1', filter, { order: SortOrder.DESC, sortBy: undefined as never }, pagination);
+
+        expect(prismaMock.todo.findMany).toHaveBeenCalledWith(expect.objectContaining({ orderBy: {} }));
+      });
+    });
+
     describe('positive cases', () => {
       it('returns paginated entity with mapped todos', async () => {
         prismaMock.$transaction.mockResolvedValue([[todoData], 1]);

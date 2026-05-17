@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 
+import { RedisErrors } from '../../error-handler/errors/redis.errors';
 import { LoggerService } from '../../logger/logger.service';
 import { CacheRedis } from './clients/cache.client';
 import { ThrottlerRedis } from './clients/throttler.client';
@@ -63,12 +64,38 @@ describe('RedisManagerService', () => {
       expect(throttlerMock.disconnect).toHaveBeenCalled();
     });
 
-    it('destroy logs error when quit fails', async () => {
+    it('destroy logs error when quit fails with an Error instance', async () => {
       cacheMock.quit.mockRejectedValue(new Error('quit failed'));
 
       await service.destroy();
 
       expect(logger.error).toHaveBeenCalled();
+    });
+
+    it('destroy does not log error when quit fails with a non-Error value', async () => {
+      cacheMock.quit.mockRejectedValue('non-error string');
+
+      await service.destroy();
+
+      expect(logger.error).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('RedisErrors', () => {
+  describe('negative cases', () => {
+    it('falls back to static message when empty string is provided', () => {
+      const err = new RedisErrors('');
+
+      expect(err.message).toBe(RedisErrors.message);
+    });
+  });
+
+  describe('positive cases', () => {
+    it('uses provided message when non-empty', () => {
+      const err = new RedisErrors('custom redis error');
+
+      expect(err.message).toBe('custom redis error');
     });
   });
 });
