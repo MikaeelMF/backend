@@ -1,7 +1,7 @@
 # AI-Assisted Development
 
 <p align="center">
-  <img alt="AI Assisted Development" src="https://github.com/prod-forge/backend/blob/main/docs/assets/ai-development.png" width="501px" height="401px">
+  <img alt="AI Assisted Development" src="assets/ai-development.png" width="501px" height="401px">
 </p>
 
 AI coding agents can significantly speed up development.
@@ -81,34 +81,130 @@ Without clear structure, AI often produces:
 - inconsistent abstractions
 - chaotic project structure
 
-## AI Instructions
+This project demonstrates that approach in practice. The layer separation (`src/api/` for controllers, `src/features/`
+for business logic, `src/modules/` for infrastructure), naming conventions, and `CLAUDE.md` rules were all established
+before any AI-assisted feature generation. As a result, generated code naturally fits the existing architecture without
+manual correction.
 
-Most AI tools support project-level instruction files such as **CLAUDE.md**.
+## Workflow
 
-Keep these files short and focused.
+Plan before you generate. For anything beyond a trivial change, planning first produces dramatically more consistent
+results.
 
-Good instructions define:
+### Input modes
 
-- architectural constraints
-- behavioral rules
-- workflow expectations
+Claude Code switches input modes with **Shift+Tab**:
 
-Avoid duplicating things AI can already infer from the project itself, such as:
+- **Default** — reads anything, but asks before edits or shell commands.
+- **Accept edits** — applies any change not blocked by `settings.json` permissions.
+- **Plan mode** — analysis and planning only, no edits.
 
-- ESLint rules
-- Prettier configuration
-- folder structure
-- installed dependencies
+Use default mode for unfamiliar code, accept edits for well-scoped work you trust, and plan mode at the start of a
+feature.
 
-Useful instruction examples:
+### Plan, then implement
 
-- avoid unrelated refactoring
-- reuse existing abstractions
-- keep changes minimal
-- avoid unnecessary dependencies
-- avoid overengineering
+A reliable flow for a new feature:
 
-The main goal is to keep the AI focused on the current task.
+1. `/model opus`, then Shift+Tab → **plan mode**.
+2. Write a detailed prompt with the task and a checklist of steps to perform.
+3. Review the generated plan, validate every point, add anything missing by hand.
+4. Ask Claude to save it under `.claude/plans/`.
+5. Switch to `/model sonnet` for implementation — faster and cheaper.
+6. Point Claude at the saved plan and let it implement, checking off items as it progresses.
+
+Opus plans, Sonnet builds: better thinking where it matters, lower cost where it doesn't. Commit approved plans to the
+repo and link them to the ticket — e.g. `.claude/plans/PROJ-142-users-crud.md`.
+
+### Save your prompts
+
+A good prompt is reusable and worth keeping. Store it next to the plan, link the ticket, and structure it as
+**Context → Task → Details → Pattern → Constraints**. The _Pattern_ line is the highest-leverage part — point Claude at
+an existing feature folder as a template (see [Task Decomposition](#task-decomposition) for a full example).
+
+## Project Knowledge Files
+
+A few committed files give Claude durable context across sessions and help the whole team.
+
+### MEMORY.md
+
+Non-obvious facts you can't infer from the code. Commit it so the knowledge survives. Rule of thumb: _if a teammate
+reading only the code would miss it, write it down._
+
+Worth recording, for example:
+
+- A method with a hidden side effect that can't be renamed because other teams depend on it — the note says "to do X,
+  call `safeDoX()`, not `doX()` (which also triggers Y)."
+- Scaffolding intentionally left for an upcoming task, so the next person doesn't treat it as dead code.
+
+### REVIEW.md
+
+A code-style reference Claude fills out accurately when the project already has solid lint/Prettier rules and enough
+existing code to learn patterns from.
+
+When generating it, also ask for a **reviewer checklist** section so it's useful in PR review. Then add a `Skip` block
+by hand for files nobody should review:
+
+```markdown
+## Skip
+
+- Generated files: ./database-manager/generated/\*\*
+- Lock files: _-lock, _.lock
+```
+
+### docs/
+
+Keep at least basic docs (`architecture.md`, `api.md`, `db-schema.md`, `developers-guide.md`) — they help both Claude
+and developers. Then tell Claude to keep them current via `CLAUDE.md`:
+
+```markdown
+## Documentation Rules
+
+After every change, update any affected docs in `.claude/docs/`:
+
+- architecture.md — modules added/removed, middleware/interceptor/filter wiring, request lifecycle
+- api.md — endpoints, request/response shapes, error codes, auth behavior
+- db-schema.md — schema changes (models, fields, indexes, relations)
+- developers-guide.md — setup, env vars, scripts, feature patterns
+
+Skip docs for internal refactors with no observable effect on architecture, API, schema, or workflow.
+```
+
+### Skills
+
+Turn any repeated action into a skill: define it once, invoke it with a slash command. For example, a `commit` skill
+that stages changes and writes a message in the project's convention — called with `/commit`. Good candidates: commits,
+running a specific test suite, or scaffolding a new feature.
+
+## Pre-Hooks
+
+Pre-hooks are shell commands that run before Claude uses a tool. They can inspect the input and block the action
+entirely — useful for protecting files that should never be touched by AI.
+
+All hooks are defined in [`.claude/settings.json`](../.claude/settings.json). If Claude tries to perform a
+blocked action, the hook returns a `deny` decision with an explanatory message and the action never happens.
+
+This is the safest way to enforce boundaries — unlike `CLAUDE.md` instructions which Claude can accidentally
+ignore, a hook is enforced at the tooling level regardless of what was asked.
+
+### Protected files (`Edit|Write`)
+
+| Path                             | Reason                                                                                         |
+| -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `database-manager/migrations/**` | Migration files are generated by Prisma — editing them manually corrupts the migration history |
+| `package-lock.json`              | Managed by npm automatically — hand-editing breaks the lockfile                                |
+| `.env`, `.env.*`                 | Contain secrets and must never be written by AI                                                |
+| `CHANGELOG.md`                   | Generated automatically by the release tooling (`nx release`)                                  |
+| `dist/**`                        | Build artifacts — generated by the build step, not manually maintained                         |
+| `coverage/**`                    | Generated test reports — produced by the test runner                                           |
+
+### Blocked commands (`Bash`)
+
+| Pattern                            | Reason                                                                         |
+| ---------------------------------- | ------------------------------------------------------------------------------ |
+| `--legacy-peer-deps`               | Silently alters npm dependency resolution in ways that can mask real conflicts |
+| `git push --force` / `git push -f` | Overwrites shared remote history — irreversible without backup                 |
+| `git reset --hard`                 | Discards all local changes without recovery — irreversible                     |
 
 ## Task Decomposition
 
@@ -121,42 +217,37 @@ Create a service that returns users
 Good prompt:
 
 ```text
+Context:
+NestJS app for learning REST APIs. There is no users module yet. Add a simple in-memory CRUD
+to demonstrate the basic structure of a NestJS module.
+
 Task:
-Implement an endpoint for retrieving paginated users from the User table.
+Create a Users module with full CRUD.
 
-Requirements:
-- pagination params must be implemented through DTOs
-- validation must follow the existing project validation approach
-- default values must be applied for missing params
-- endpoint must follow existing API conventions
-- response format must match current project standards
-- swagger documentation must follow existing project patterns
-- code must be covered by all existing test types used in the project
-- reuse existing test utilities
-- code must pass lint/typecheck/tests without configuration changes
+Details:
+- NestJS + TypeScript
+- Files: users.module.ts, users.controller.ts, users.service.ts,
+  dto/create-user.dto.ts, dto/update-user.dto.ts
+- User fields: id (number), name (string), email (string)
+- Store data in an in-memory array inside the service
+- Endpoints: POST /users, GET /users, GET /users/:id, PATCH /users/:id, DELETE /users/:id
+- class-validator: name (required string), email (required valid email)
+- Throw NotFoundException when the user does not exist
 
-Before implementation:
-1. Find similar endpoints in the project
-2. Use them as a reference implementation
-3. Follow the existing abstraction level
-4. Avoid introducing unnecessary dependencies
+Pattern:
+Use src/features/todos/ as the structural reference for this feature.
 
-Result:
-- show only necessary changes
-- avoid unrelated refactoring
-- explain the purpose of each change
-- provide a list of modified files
+Constraints:
+- Do not modify existing modules
+- Do not add new dependencies
+- Code must pass lint/typecheck/tests without configuration changes
 ```
 
-The more specific the task is, the better the generated result becomes.
-
-Large tasks should be decomposed into smaller isolated steps whenever possible.
+The more specific the task, the better the result. Decompose large tasks into smaller isolated steps whenever possible.
 
 ## Common AI Problems
 
-AI-generated code often fails in predictable ways.
-
-Typical problems include:
+AI-generated code often fails in predictable ways:
 
 - overengineering
 - unnecessary abstractions
@@ -250,6 +341,9 @@ This includes:
 Tools such as [SonarCloud/SonarQube](https://www.sonarsource.com/products/sonarqube/cloud/)
 can provide additional static analysis during pull request reviews.
 
+This project includes `eslint-plugin-sonarjs` as part of the default ESLint configuration, so a subset of
+SonarQube-style rules runs automatically on every commit and CI check — no separate setup required.
+
 ### Never Trust AI Blindly
 
 If generated code looks unclear or suspicious:
@@ -269,15 +363,14 @@ The final responsibility for the codebase always belongs to the developer and th
 
 A practical AI-assisted workflow usually looks like this:
 
-1. Define the task manually
-2. Decompose the task
-3. Define constraints
-4. Ask AI to analyze existing implementations
-5. Request an implementation plan
-6. Generate code incrementally
-7. Review generated code manually
-8. Run all quality checks
-9. Commit result incrementally
-10. Review all changes very attentive
+1. Define the task manually and link it to a ticket
+2. Decompose it into isolated steps
+3. Generate and validate a plan in plan mode (Opus)
+4. Save the plan to `.claude/plans/` and commit it
+5. Switch to Sonnet and implement from the saved plan
+6. Review generated code manually after each step
+7. Run all relevant quality checks
+8. Commit each completed step separately
+9. Review all changes carefully before opening a pull request
 
 AI coding agents are most effective when used as controlled engineering accelerators, not autonomous developers.
